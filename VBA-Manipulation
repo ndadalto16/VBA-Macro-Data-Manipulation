@@ -1,0 +1,29 @@
+Sub Consolidate_Rows()
+Dim xRg As Range
+Dim xRows As Long
+Dim I As Long, J As Long, K As Long
+On Error Resume Next
+Set xRg = Application.InputBox("Select Range:", "Kutools For Excel", Selection.Address, , , , , 8)
+Set xRg = Range(Intersect(xRg, ActiveSheet.UsedRange).Address)
+If xRg Is Nothing Then Exit Sub
+xRows = xRg.Rows.Count
+For I = xRows To 2 Step -1
+For J = 1 To I - 1
+If xRg(I, 1).Value = xRg(J, 1).Value And J <> I Then
+For K = 2 To xRg.Columns.Count
+If xRg(J, K).Value <> "" Then
+If xRg(I, K).Value = "" Then
+xRg(I, K) = xRg(J, K).Value
+Else
+xRg(I, K) = xRg(I, K).Value & "," & xRg(J, K).Value
+End If
+End If
+Next
+xRg(J, 1).EntireRow.Delete
+I = I - 1
+J = J - 1
+End If
+Next
+Next
+ActiveSheet.UsedRange.Columns.AutoFit
+End Sub
